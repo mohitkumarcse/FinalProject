@@ -17,11 +17,9 @@ const AdminPrivateRoute = () => {
     });
   }, []);
 
-  // useEffect(() => {
   axios.interceptors.response.use(
     undefined,
     function axiosRetryInterceptors(err) {
-      // console.log("statuscode:", err.response.status);
       if (err.response && err.response.status == 401) {
         Swal.fire("Unauthorized", err.response.data.message, "warning");
         navigate("/");
