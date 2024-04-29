@@ -14,7 +14,7 @@ use App\Http\Controllers\API\AuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->group(function(){
+Route::middleware('auth:sanctum', 'isapiadmin')->group(function(){
 
     Route::get('/checkingAuthenticated' , function(){
         return response()->json([

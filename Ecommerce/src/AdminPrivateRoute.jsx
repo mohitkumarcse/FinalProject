@@ -10,6 +10,7 @@ const AdminPrivateRoute = () => {
 
   useEffect(() => {
     axios.get("http://127.0.0.1:8000/api/checkingAuthenticated").then((res) => {
+      console.log("++++", res.status);
       if (res.status === 200) {
         setAuthentication(true);
       }
@@ -26,6 +27,23 @@ const AdminPrivateRoute = () => {
       }
 
       return Promise.reject(err);
+    }
+  );
+
+  axios.interceptors.response.use(
+    function (response) {
+      return response;
+    },
+    function (error) {
+      if (error.response.status === 403) {
+        Swal.fire("Forbidden", error.response.data.message, "warning");
+        navigate("/Page403");
+      }
+      if (error.response.status === 404) {
+        Swal.fire("Page Not Found", "url/page not found", "warning");
+        navigate("/Page404");
+      }
+      return Promise.reject(error);
     }
   );
 

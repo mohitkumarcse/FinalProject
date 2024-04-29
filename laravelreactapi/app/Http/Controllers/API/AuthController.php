@@ -68,7 +68,15 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
 
             $user = Auth::user();
-            $token = $user->createToken('authToken')->plainTextToken;
+
+            if($user->role_as === 1){  // 1 for admin login
+
+                $token = $user->createToken($user->email.'_AdminToken', ['server:admin'])->plainTextToken;
+
+            }else{
+
+                $token = $user->createToken($user->email.'_Token', [])->plainTextToken;
+            }
 
             return response()->json([
                 'statusCode' => 200,
@@ -77,6 +85,8 @@ class AuthController extends Controller
                 'token'=> $token
             ]);
         } else {
+
+
             // Authentication failed
             return response()->json([
                 'statusCode' => 401,
