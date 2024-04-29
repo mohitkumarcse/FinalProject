@@ -6,6 +6,10 @@ import Home from "./components/frontend/Home"; // Importing Home component
 import Login from "./components/frontend/auth/Login"; // Importing Login component
 import Register from "./components/frontend/auth/Register"; // Importing Register component
 import axios from "axios"; // Importing Axios library
+import { Navigate } from "react-router-dom";
+import AdminPrivateRoute from "./AdminPrivateRoute";
+// import AdminPrivateRoute from "./AdminPrivateRoute";
+// import AdminRoutes from "./AdminRoutes";
 
 // Configuring default Axios settings
 // axios.defaults.baseURL = "http://127.0.0.1:8000/"; // Setting base URL for API requests
@@ -20,14 +24,37 @@ axios.interceptors.request.use(function (config) {
 });
 
 function App() {
+  // const navigate = useNavigate();
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/login"
+          element={
+            localStorage.getItem("auth_token") ? <Navigate to="/" /> : <Login />
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            localStorage.getItem("auth_token") ? (
+              <Navigate to="/" />
+            ) : (
+              <Register />
+            )
+          }
+        />
 
-        <Route path="/admin/*" element={<AdminLayout />} />
+        {/* <Route path="/admin/*" element={<AdminLayout />} /> */}
+
+        {/* <Route path="/admin/*" element={<AdminRoutes />} /> */}
+        {/* <AdminPrivateRoute exact path="/" element={<AdminLayout />} /> */}
+        <Route exact path="/admin" element={<AdminPrivateRoute />}>
+          <Route exact path="/admin" element={<AdminLayout />} />
+          <Route exact path="/admin/dashboard" element={<AdminLayout />} />
+          <Route exact path="/admin/profile" element={<AdminLayout />} />
+        </Route>
       </Routes>
     </Router>
   );

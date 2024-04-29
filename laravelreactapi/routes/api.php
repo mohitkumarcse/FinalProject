@@ -16,6 +16,13 @@ use App\Http\Controllers\API\AuthController;
 
 Route::middleware('auth:sanctum')->group(function(){
 
+    Route::get('/checkingAuthenticated' , function(){
+        return response()->json([
+            'statusCode'=>200,
+            'message'=>'You Are In'
+        ]);
+    });
+
     Route::post('logout', [AuthController::class, 'logout']);
 
 });
