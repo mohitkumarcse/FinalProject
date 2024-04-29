@@ -1,29 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const AdminPrivateRoute = () => {
+  const navigate = useNavigate();
   const [authentication, setAuthentication] = useState(false);
-  const [loading, setLoadning] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/api/checkingAuthenticated")
-      .then((res) => {
-        if (res.status === 200) {
-          setAuthentication(true);
-        }
-        setLoadning(fasle);
-      })
-
-      .catch((error) => {
-        console.error("Error checking authentication:", error);
-        setLoadning(false);
-      });
-    return () => {
-      setAuthentication(false);
-    };
+    axios.get("http://127.0.0.1:8000/api/checkingAuthenticated").then((res) => {
+      if (res.status === 200) {
+        setAuthentication(true);
+      }
+      setLoading(false);
+    });
   }, []);
+
+  // useEffect(() => {
+  axios.interceptors.response.use(
+    undefined,
+    function axiosRetryInterceptors(err) {
+      // console.log("statuscode:", err.response.status);
+      if (err.response && err.response.status == 401) {
+        Swal.fire("Unauthorized", err.response.data.message, "warning");
+        navigate("/");
+      }
+
+      return Promise.reject(err);
+    }
+  );
 
   if (loading) {
     return <h1>Loading...</h1>;
