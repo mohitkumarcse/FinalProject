@@ -9,7 +9,8 @@ const Navbar = () => {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    axios.post(`http://127.0.0.1:8000/api/logout`).then((res) => {
+    axios.post(`logout`).then((res) => {
+      console.log("&&&&&");
       if (res.data.statusCode === 200) {
         localStorage.removeItem("auth_name");
         localStorage.removeItem("auth_token");

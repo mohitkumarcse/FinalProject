@@ -1,18 +1,20 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AdminLayout from "./layouts/admin/AdminLayout"; // Importing AdminLayout component
-import "bootstrap/dist/css/bootstrap.min.css"; // Importing Bootstrap CSS
-import Home from "./components/frontend/Home"; // Importing Home component
-import Login from "./components/frontend/auth/Login"; // Importing Login component
-import Register from "./components/frontend/auth/Register"; // Importing Register component
-import axios from "axios"; // Importing Axios library
+import AdminLayout from "./layouts/admin/AdminLayout";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import Home from "./components/frontend/Home";
+import Login from "./components/frontend/auth/Login";
+import Register from "./components/frontend/auth/Register";
+import axios from "axios";
 import { Navigate } from "react-router-dom";
 import AdminPrivateRoute from "./AdminPrivateRoute";
-// import AdminPrivateRoute from "./AdminPrivateRoute";
-// import AdminRoutes from "./AdminRoutes";
+import Page403 from "./components/errors/Page403";
+import Page404 from "./components/errors/Page404";
+import "./App.css";
 
 // Configuring default Axios settings
-// axios.defaults.baseURL = "http://127.0.0.1:8000/"; // Setting base URL for API requests
+axios.defaults.baseURL = "http://127.0.0.1:8000/api/";
 // axios.defaults.headers.post["Content-Type"] = "application/json"; // Setting content type for POST requests
 // axios.defaults.headers.post["Accept"] = "application/json"; // Setting accept header for POST requests
 // axios.defaults.withCredentials = true; // Allowing sending cookies with cross-origin requests
@@ -24,11 +26,12 @@ axios.interceptors.request.use(function (config) {
 });
 
 function App() {
-  // const navigate = useNavigate();
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/page403" element={<Page403 />} />
+        <Route path="/page404" element={<Page404 />} />
         <Route
           path="/login"
           element={
@@ -46,14 +49,8 @@ function App() {
           }
         />
 
-        {/* <Route path="/admin/*" element={<AdminLayout />} /> */}
-
-        {/* <Route path="/admin/*" element={<AdminRoutes />} /> */}
-        {/* <AdminPrivateRoute exact path="/" element={<AdminLayout />} /> */}
         <Route exact path="/admin" element={<AdminPrivateRoute />}>
-          <Route exact path="/admin" element={<AdminLayout />} />
-          <Route exact path="/admin/dashboard" element={<AdminLayout />} />
-          <Route exact path="/admin/profile" element={<AdminLayout />} />
+          <Route exact path="/admin/*" element={<AdminLayout />}></Route>
         </Route>
       </Routes>
     </Router>

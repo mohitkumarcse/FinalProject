@@ -69,12 +69,13 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            if($user->role_as === 1){  // 1 for admin login
+            if($user->role_as === 1){
 
+                $role ='admin';
                 $token = $user->createToken($user->email.'_AdminToken', ['server:admin'])->plainTextToken;
 
             }else{
-
+                $role ='';
                 $token = $user->createToken($user->email.'_Token', [])->plainTextToken;
             }
 
@@ -82,12 +83,11 @@ class AuthController extends Controller
                 'statusCode' => 200,
                 'message' => 'Login Successful!',
                 'username' => $user->name,
-                'token'=> $token
+                'token'=> $token,
+                'role'=>$role
             ]);
         } else {
 
-
-            // Authentication failed
             return response()->json([
                 'statusCode' => 401,
                 'message' => 'Invalid Credentials!',
@@ -96,7 +96,6 @@ class AuthController extends Controller
     }
 
     public function logout(){
-
         auth()->user()->tokens()->delete();
         return response()->json([
             'statusCode' => 200,

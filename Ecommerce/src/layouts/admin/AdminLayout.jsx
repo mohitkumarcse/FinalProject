@@ -19,19 +19,14 @@ const AdminLayout = () => {
         <div id="layoutSidenav_content">
           <main>
             <Routes>
-              {routes.map((route) => {
-                console.log("Route element:", route.element);
-                return (
-                  <Route
-                    key={route.path}
-                    path={route.path}
-                    element={route.element && <route.element />}
-                  />
-                );
-              })}
+              {routes.map((route, index) => (
+                <Route
+                  key={index}
+                  path={`${route.path}`}
+                  element={route.element}
+                />
+              ))}
             </Routes>
-            {/* <Navigate to="/admin/dashboard" />; */}
-            {/* <Navigate to="/admin/dashboard" replace={true} /> */}
           </main>
 
           <Footer />

@@ -9,8 +9,7 @@ const AdminPrivateRoute = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/checkingAuthenticated").then((res) => {
-      console.log("++++", res.status);
+    axios.get("checkingAuthenticated").then((res) => {
       if (res.status === 200) {
         setAuthentication(true);
       }
@@ -51,7 +50,6 @@ const AdminPrivateRoute = () => {
     return <h1>Loading...</h1>;
   }
 
-  console.log(authentication);
   return authentication ? <Outlet /> : <Navigate to="/login" />;
 };
 

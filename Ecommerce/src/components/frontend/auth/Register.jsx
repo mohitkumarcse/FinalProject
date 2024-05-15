@@ -29,13 +29,12 @@ const Register = () => {
     };
 
     axios
-      .post(`http://127.0.0.1:8000/api/register`, data)
+      .post(`register`, data)
       .then((res) => {
         if (res.data.statusCode === 200) {
           localStorage.setItem("auth_token", res.data._Token);
           localStorage.setItem("auth_name", res.data.username);
           Swal.fire("Success", res.data.message, "success").then(() => {
-            // Navigate to the home page after closing the success message
             navigate("/");
           });
         } else {

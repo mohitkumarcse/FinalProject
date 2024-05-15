@@ -19,7 +19,6 @@ const Login = () => {
 
   const loginSubmit = (e) => {
     e.preventDefault();
-    console.log("submit");
 
     const data = {
       email: loginInput.email,
@@ -27,15 +26,17 @@ const Login = () => {
     };
 
     axios
-      .post(`http://127.0.0.1:8000/api/login`, data)
+      .post(`login`, data)
       .then((res) => {
         if (res.data.statusCode === 200) {
           localStorage.setItem("auth_token", res.data.token);
           localStorage.setItem("auth_name", res.data.username);
-          Swal.fire("Success", res.data.message, "success").then(() => {
-            // Navigate to the home page after closing the success message
+          Swal.fire("Success", res.data.message, "success");
+          if (res.data.username === "admin") {
+            navigate("/admin/dashboard");
+          } else {
             navigate("/");
-          });
+          }
         } else if (res.data.statusCode === 401) {
           Swal.fire("Error", res.data.message, "error");
         } else {
