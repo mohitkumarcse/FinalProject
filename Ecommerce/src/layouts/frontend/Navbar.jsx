@@ -10,7 +10,6 @@ const Navbar = () => {
   const handleLogout = (e) => {
     e.preventDefault();
     axios.post(`logout`).then((res) => {
-      console.log("&&&&&");
       if (res.data.statusCode === 200) {
         localStorage.removeItem("auth_name");
         localStorage.removeItem("auth_token");

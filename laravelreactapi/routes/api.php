@@ -21,6 +21,14 @@ Route::middleware('auth:sanctum', 'isapiadmin')->group(function(){
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('add-category', [CategoryController::class, 'store']);
     Route::get('view-category', [CategoryController::class, 'view']);
+    Route::post('edit-category/{id}', [CategoryController::class, 'edit']);
+    Route::post('update-category/{id}', [CategoryController::class, 'update']);
+    Route::post('delete-category/{id}', [CategoryController::class, 'delete']);
+    Route::get('all-category', [CategoryController::class, 'allCategory']);
+
+
+
+
 
 });
 

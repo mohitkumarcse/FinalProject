@@ -3,11 +3,10 @@ import "../../assets/admin/js/scripts";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import routes from "../../routes/routes";
 
 const AdminLayout = () => {
-  console.log(routes);
   return (
     <div className="sb-nav-fixed">
       <Navbar />

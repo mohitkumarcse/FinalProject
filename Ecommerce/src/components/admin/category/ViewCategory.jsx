@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const ViewCategory = () => {
   const [loading, setLoading] = useState(true);
@@ -10,6 +11,7 @@ const ViewCategory = () => {
     axios
       .get("view-category")
       .then((res) => {
+        console.log(res.data);
         if (res.data.statusCode === 200) {
           setCategoryList(res.data.category_list);
         }
@@ -20,11 +22,24 @@ const ViewCategory = () => {
       });
   }, []);
 
+  const deleteCategory = (e, id) => {
+    e.preventDefault();
+    const thisclicked = e.currentTarget;
+    thisclicked.innerText = "Deleting..";
+
+    axios.post(`delete-category/${id}`).then((res) => {
+      if (res.data.statusCode === 200) {
+        Swal.fire("Success", res.data.message, "success");
+        thisclicked.closest("tr").remove();
+      }
+    });
+  };
+
   let VIEW_CATEGORY_HTML_TABLE = "";
 
   if (loading) {
     return <h4>Loading Category .....</h4>;
-  } else {
+  } else if (categoryList && categoryList.length > 0) {
     VIEW_CATEGORY_HTML_TABLE = categoryList.map((category) => {
       return (
         <tr key={category.id}>
@@ -34,20 +49,26 @@ const ViewCategory = () => {
           <td>{category.status}</td>
           <td>
             <Link
-              to={`edit-category/${category.id}`}
+              to={`/admin/edit-category/${category.id}`}
               className="btn btn-success btn-sm"
             >
               Edit
             </Link>
           </td>
           <td>
-            <button type="button" className="btn btn-danger btn-sm">
+            <button
+              type="button"
+              onClick={(e) => deleteCategory(e, category.id)}
+              className="btn btn-danger btn-sm"
+            >
               Delete
             </button>
           </td>
         </tr>
       );
     });
+  } else {
+    VIEW_CATEGORY_HTML_TABLE = <p>No Record Found</p>;
   }
 
   return (
