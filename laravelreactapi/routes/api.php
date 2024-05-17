@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoryController;
-
+use App\Http\Controllers\API\ProductController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -19,6 +19,10 @@ Route::middleware('auth:sanctum', 'isapiadmin')->group(function(){
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
+
+    //Category
+
+
     Route::post('add-category', [CategoryController::class, 'store']);
     Route::get('view-category', [CategoryController::class, 'view']);
     Route::post('edit-category/{id}', [CategoryController::class, 'edit']);
@@ -26,9 +30,9 @@ Route::middleware('auth:sanctum', 'isapiadmin')->group(function(){
     Route::post('delete-category/{id}', [CategoryController::class, 'delete']);
     Route::get('all-category', [CategoryController::class, 'allCategory']);
 
+    //product
 
-
-
+    Route::post('store-product', [ProductController::class, 'store']);
 
 });
 

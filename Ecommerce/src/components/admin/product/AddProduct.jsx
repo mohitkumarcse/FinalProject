@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const AddProduct = () => {
   const [categoryList, setCategoryList] = useState([]);
@@ -16,10 +17,12 @@ const AddProduct = () => {
     original_price: "",
     product_qty: "",
     popular: "",
+    product_brand: "",
     featured: "",
     status: "",
+    error_list: [],
   });
-
+  const [picture, setPicture] = useState(null);
   useEffect(() => {
     axios.get(`all-category`).then((res) => {
       if (res.data.statusCode === 200) {
@@ -32,28 +35,49 @@ const AddProduct = () => {
     setProductInput({ ...productInput, [e.target.name]: e.target.value });
   };
 
+  const handleImage = (e) => {
+    setPicture({ image: e.target.files[0] });
+  };
+
+  console.log(picture);
+
   const productSubmit = (e) => {
     e.preventDefault();
-    const data = {
-      category_id: productInput.category_id,
-      product_name: productInput.product_name,
-      product_slug: productInput.product_slug,
-      description: productInput.description,
-      meta_title: productInput.meta_title,
-      meta_keywords: productInput.meta_keywords,
-      meta_description: productInput.meta_description,
-      selling_price: productInput.selling_price,
-      original_price: productInput.original_price,
-      product_qty: productInput.product_qty,
-      popular: productInput.popular ? 0 : 1,
-      featured: productInput.featured ? 0 : 1,
-      status: productInput.status ? 0 : 1,
-    };
 
-    axios.post(`add-product`, data).then((res) => {
-      console.log(res);
+    const formData = new FormData();
+
+    if (picture != null) {
+      formData.append("image", picture.image);
+    }
+
+    formData.append("category_id", productInput.category_id);
+    formData.append("product_name", productInput.product_name);
+    formData.append("product_slug", productInput.product_slug);
+    formData.append("description", productInput.description);
+    formData.append("meta_title", productInput.meta_title);
+    formData.append("meta_keywords", productInput.meta_keywords);
+    formData.append("meta_description", productInput.meta_description);
+    formData.append("selling_price", productInput.selling_price);
+    formData.append("original_price", productInput.original_price);
+    formData.append("product_brand", productInput.product_brand);
+    formData.append("product_qty", productInput.product_qty);
+    formData.append("popular", productInput.popular ? 0 : 1);
+    formData.append("featured", productInput.featured ? 0 : 1);
+    formData.append("status", productInput.status ? 0 : 1);
+
+    axios.post(`store-product`, formData).then((res) => {
+      console.log(res.data.statusCode === 200);
+      if (res.data.statusCode === 200) {
+        Swal.fire("Success", res.data.message, "success");
+      } else if (res.data.statusCode === 422) {
+        setProductInput({
+          ...productInput,
+          error_list: res.data.validation_error,
+        });
+      }
     });
   };
+
   return (
     <div className="container-fluid">
       <div className="card mb-4">
@@ -145,20 +169,26 @@ const AddProduct = () => {
                   <label>Slug</label>
                   <input
                     type="text"
-                    name="slug"
+                    name="product_slug"
                     onChange={handleInput}
                     className="form-control"
                   />
+                  <span className="text-danger">
+                    {productInput.error_list.product_slug}
+                  </span>
                 </div>
 
                 <div className="form-group mb-3">
                   <label>Name</label>
                   <input
                     type="text"
-                    name="name"
+                    name="product_name"
                     onChange={handleInput}
                     className="form-control"
                   />
+                  <span className="text-danger">
+                    {productInput.error_list.product_name}
+                  </span>
                 </div>
 
                 <div className="form-group mb-3">
@@ -186,6 +216,9 @@ const AddProduct = () => {
                     onChange={handleInput}
                     className="form-control"
                   />
+                  <span className="text-danger">
+                    {productInput.error_list.meta_title}
+                  </span>
                 </div>
                 <div className="form-group mb-3">
                   <label>Meta Keywords</label>
@@ -222,6 +255,9 @@ const AddProduct = () => {
                       onChange={handleInput}
                       className="form-control"
                     />
+                    <span className="text-danger">
+                      {productInput.error_list.selling_price}
+                    </span>
                   </div>
                   <div className="col-md-4 form-group mb-3">
                     <label>Original Price</label>
@@ -231,26 +267,35 @@ const AddProduct = () => {
                       onChange={handleInput}
                       className="form-control"
                     />
+                    <span className="text-danger">
+                      {productInput.error_list.original_price}
+                    </span>
                   </div>
 
                   <div className="col-md-4 form-group mb-3">
                     <label>Quantity</label>
                     <input
                       type="text"
-                      name="qty"
+                      name="product_qty"
                       onChange={handleInput}
                       className="form-control"
                     />
+                    <span className="text-danger">
+                      {productInput.error_list.product_qty}
+                    </span>
                   </div>
 
                   <div className="col-md-4 form-group mb-3">
                     <label>Brand</label>
                     <input
                       type="text"
-                      name="brand"
+                      name="product_brand"
                       onChange={handleInput}
                       className="form-control"
                     />
+                    <span className="text-danger">
+                      {productInput.error_list.product_brand}
+                    </span>
                   </div>
 
                   <div className="col-md-8 form-group mb-3">
@@ -258,9 +303,12 @@ const AddProduct = () => {
                     <input
                       type="file"
                       name="image"
-                      onChange={handleInput}
+                      onChange={handleImage}
                       className="form-control"
                     />
+                    <span className="text-danger">
+                      {productInput.error_list.image}
+                    </span>
                   </div>
 
                   <div className="col-md-4 form-group mb-3">
