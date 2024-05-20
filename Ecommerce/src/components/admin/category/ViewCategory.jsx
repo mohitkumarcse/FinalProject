@@ -11,7 +11,6 @@ const ViewCategory = () => {
     axios
       .get("view-category")
       .then((res) => {
-        console.log(res.data);
         if (res.data.statusCode === 200) {
           setCategoryList(res.data.category_list);
         }

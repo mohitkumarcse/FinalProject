@@ -13,18 +13,39 @@ const Sidebar = () => {
             </div>
             Dashboard
           </Link>
-          <Link className="nav-link" to="/admin/add-category">
+
+          <a
+            className="nav-link collapsed"
+            href="#"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseCategory"
+            aria-expanded="false"
+            aria-controls="collapseProduct"
+          >
             <div className="sb-nav-link-icon">
-              <i className="fas fa-tachometer-alt"></i>
+              <i className="fas fa-columns"></i>
             </div>
-            Add Category
-          </Link>
-          <Link className="nav-link" to="/admin/view-category">
-            <div className="sb-nav-link-icon">
-              <i className="fas fa-tachometer-alt"></i>
+            Category
+            <div className="sb-sidenav-collapse-arrow">
+              <i className="fas fa-angle-down"></i>
             </div>
-            View Category
-          </Link>
+          </a>
+          <div
+            className="collapse"
+            id="collapseCategory"
+            aria-labelledby="headingOne"
+            data-bs-parent="#sidenavAccordion"
+          >
+            <nav className="sb-sidenav-menu-nested nav">
+              <Link className="nav-link" to="/admin/add-category">
+                Add Category
+              </Link>
+              <Link className="nav-link" to="/admin/view-category">
+                View Category
+              </Link>
+            </nav>
+          </div>
+
           {/* <div className="sb-sidenav-menu-heading">Interface</div> */}
           <a
             className="nav-link collapsed"

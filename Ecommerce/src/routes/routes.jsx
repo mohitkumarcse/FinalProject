@@ -6,6 +6,7 @@ import ViewCategory from "../components/admin/category/ViewCategory";
 import EditCategory from "../components/admin/category/EditCategory";
 import ViewProduct from "../components/admin/product/ViewProduct";
 import AddProduct from "../components/admin/product/AddProduct";
+import EditProduct from "../components/admin/product/EditProduct";
 
 const routes = [
   {
@@ -35,6 +36,14 @@ const routes = [
   {
     path: "/view-product",
     element: <ViewProduct />,
+  },
+  {
+    path: "/view-product/:id",
+    element: <ViewProduct />,
+  },
+  {
+    path: "/edit-product/:id",
+    element: <EditProduct />,
   },
 ];
 

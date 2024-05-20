@@ -1,25 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const AddProduct = () => {
+const EditProduct = () => {
   const [categoryList, setCategoryList] = useState([]);
-  const [productInput, setProductInput] = useState({
-    category_id: "",
-    product_name: "",
-    product_slug: "",
-    description: "",
-    meta_title: "",
-    meta_keywords: "",
-    meta_description: "",
-    selling_price: "",
-    original_price: "",
-    product_qty: "",
-    product_brand: "",
-    error_list: [],
-  });
-  const [picture, setPicture] = useState(null);
+  const [error, setError] = useState([]);
+  const [productInput, setProductInput] = useState({});
+  const [picture, setPicture] = useState([]);
   const [allCheckbox, setAllCheckbox] = useState({
     popular: false,
     featured: false,
@@ -46,59 +34,50 @@ const AddProduct = () => {
     setAllCheckbox({ ...allCheckbox, [e.target.name]: e.target.checked });
   };
 
-  const productSubmit = (e) => {
-    e.preventDefault();
+  const { id } = useParams();
 
-    const formData = new FormData();
-
-    if (picture != null) {
-      formData.append("image", picture.image);
-    }
-
-    formData.append("category_id", productInput.category_id);
-    formData.append("product_name", productInput.product_name);
-    formData.append("product_slug", productInput.product_slug);
-    formData.append("description", productInput.description);
-    formData.append("meta_title", productInput.meta_title);
-    formData.append("meta_keywords", productInput.meta_keywords);
-    formData.append("meta_description", productInput.meta_description);
-    formData.append("selling_price", productInput.selling_price);
-    formData.append("original_price", productInput.original_price);
-    formData.append("product_brand", productInput.product_brand);
-    formData.append("product_qty", productInput.product_qty);
-    formData.append("popular", allCheckbox.popular ? 1 : 0);
-    formData.append("featured", allCheckbox.featured ? 1 : 0);
-    formData.append("status", allCheckbox.status ? 1 : 0);
-
-    axios.post(`store-product`, formData).then((res) => {
+  useEffect(() => {
+    axios.post(`edit-product/${id}`).then((res) => {
       if (res.data.statusCode === 200) {
         console.log(allCheckbox);
+        setProductInput(res.data.product_list_by_id);
+        setAllCheckbox(res.data.product_list_by_id);
+      }
+    });
+  }, []);
+
+  const updateProduct = (e) => {
+    e.preventDefault();
+
+    const data = productInput;
+
+    axios.post(`update-product/${id}`, data).then((res) => {
+      if (res.data.statusCode === 200) {
         Swal.fire("Success", res.data.message, "success");
       } else if (res.data.statusCode === 422) {
-        setProductInput({
-          ...productInput,
-          error_list: res.data.validation_error,
-        });
+        setError(res.data.validation_error);
       }
     });
   };
+
+  console.log(productInput);
 
   return (
     <div className="container-fluid">
       <div className="card mb-4">
         <div className="card-header">
           <h4>
-            Add Product
+            Edit Product
             <Link
               to="/admin/view-product"
               className="btn btn-primary btn-sm float-end"
             >
-              Back
+              view product
             </Link>
           </h4>
         </div>
         <div className="card-body">
-          <form onSubmit={productSubmit}>
+          <form onSubmit={updateProduct}>
             <ul className="nav nav-tabs" id="myTab" role="tablist">
               <li className="nav-item" role="presentation">
                 <button
@@ -145,7 +124,7 @@ const AddProduct = () => {
             </ul>
             <div className="tab-content" id="myTabContent">
               <div
-                className="tab-pane card-body border fade show active"
+                className="tab-pane card-body border fade show active "
                 id="home-tab-pane"
                 role="tabpanel"
                 aria-labelledby="home-tab"
@@ -156,14 +135,18 @@ const AddProduct = () => {
                   <select
                     name="category_id"
                     onChange={handleInput}
+                    value={productInput.category_id || ""}
                     className="form-control"
                   >
-                    <option value="0">Select category</option>
-                    {categoryList.map((item, index) => (
-                      <option value={item.id} key={index}>
-                        {item.name}
-                      </option>
-                    ))}
+                    <option value="0">select category</option>
+
+                    {categoryList.map((item, index) => {
+                      return (
+                        <option value={item.id} key={index}>
+                          {item.name}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
 
@@ -173,11 +156,10 @@ const AddProduct = () => {
                     type="text"
                     name="product_slug"
                     onChange={handleInput}
+                    value={productInput.product_slug || ""}
                     className="form-control"
                   />
-                  <span className="text-danger">
-                    {productInput.error_list.product_slug}
-                  </span>
+                  <span className="text-danger">{error.product_slug}</span>
                 </div>
 
                 <div className="form-group mb-3">
@@ -186,11 +168,10 @@ const AddProduct = () => {
                     type="text"
                     name="product_name"
                     onChange={handleInput}
+                    value={productInput.product_name || ""}
                     className="form-control"
                   />
-                  <span className="text-danger">
-                    {productInput.error_list.product_name}
-                  </span>
+                  <span className="text-danger">{error.product_name}</span>
                 </div>
 
                 <div className="form-group mb-3">
@@ -199,6 +180,7 @@ const AddProduct = () => {
                     type="text"
                     name="description"
                     onChange={handleInput}
+                    value={productInput.description || ""}
                     className="form-control"
                   />
                 </div>
@@ -216,11 +198,10 @@ const AddProduct = () => {
                     type="text"
                     name="meta_title"
                     onChange={handleInput}
+                    value={productInput.meta_title || ""}
                     className="form-control"
                   />
-                  <span className="text-danger">
-                    {productInput.error_list.meta_title}
-                  </span>
+                  <span className="text-danger">{error.meta_title}</span>
                 </div>
                 <div className="form-group mb-3">
                   <label>Meta Keywords</label>
@@ -228,6 +209,7 @@ const AddProduct = () => {
                     type="text"
                     name="meta_keywords"
                     onChange={handleInput}
+                    value={productInput.meta_keywords || ""}
                     className="form-control"
                   />
                 </div>
@@ -237,6 +219,7 @@ const AddProduct = () => {
                     type="text"
                     name="meta_description"
                     onChange={handleInput}
+                    value={productInput.meta_description || ""}
                     className="form-control"
                   />
                 </div>
@@ -255,11 +238,10 @@ const AddProduct = () => {
                       type="text"
                       name="selling_price"
                       onChange={handleInput}
+                      value={productInput.selling_price || ""}
                       className="form-control"
                     />
-                    <span className="text-danger">
-                      {productInput.error_list.selling_price}
-                    </span>
+                    <span className="text-danger">{error.selling_price}</span>
                   </div>
                   <div className="col-md-4 form-group mb-3">
                     <label>Original Price</label>
@@ -267,11 +249,10 @@ const AddProduct = () => {
                       type="text"
                       name="original_price"
                       onChange={handleInput}
+                      value={productInput.original_price || ""}
                       className="form-control"
                     />
-                    <span className="text-danger">
-                      {productInput.error_list.original_price}
-                    </span>
+                    <span className="text-danger">{error.original_price}</span>
                   </div>
 
                   <div className="col-md-4 form-group mb-3">
@@ -280,11 +261,10 @@ const AddProduct = () => {
                       type="text"
                       name="product_qty"
                       onChange={handleInput}
+                      value={productInput.product_qty || ""}
                       className="form-control"
                     />
-                    <span className="text-danger">
-                      {productInput.error_list.product_qty}
-                    </span>
+                    <span className="text-danger">{error.product_qty}</span>
                   </div>
 
                   <div className="col-md-4 form-group mb-3">
@@ -293,11 +273,10 @@ const AddProduct = () => {
                       type="text"
                       name="product_brand"
                       onChange={handleInput}
+                      value={productInput.product_brand || ""}
                       className="form-control"
                     />
-                    <span className="text-danger">
-                      {productInput.error_list.product_brand}
-                    </span>
+                    <span className="text-danger">{error.product_brand}</span>
                   </div>
 
                   <div className="col-md-8 form-group mb-3">
@@ -306,13 +285,18 @@ const AddProduct = () => {
                       type="file"
                       name="image"
                       onChange={handleImage}
+                      // value={productInput.image || ""}
                       className="form-control"
                     />
-                    <span className="text-danger">
+                    <img
+                      src={`http://127.0.0.1:8000/uploads/product/${productInput.image}`}
+                      width="60px"
+                      height="40px"
+                    />
+                    {/* <span className="text-danger">
                       {productInput.error_list.image}
-                    </span>
+                    </span> */}
                   </div>
-
                   <div className="col-md-4 form-group mb-3">
                     <label>Popular (checked-shown)</label>
                     <input
@@ -320,6 +304,7 @@ const AddProduct = () => {
                       name="popular"
                       onChange={handleCheckbox}
                       checked={allCheckbox.popular}
+                      // value={productInput.popular === 1 ? "checked" : ""}
                       className="w-50 h-50"
                     />
                   </div>
@@ -331,6 +316,7 @@ const AddProduct = () => {
                       name="featured"
                       onChange={handleCheckbox}
                       checked={allCheckbox.featured}
+                      // value={productInput.featured === 1 ? "checked" : ""}
                       className="w-50 h-50"
                     />
                   </div>
@@ -342,6 +328,7 @@ const AddProduct = () => {
                       name="status"
                       onChange={handleCheckbox}
                       checked={allCheckbox.status}
+                      // value={productInput.status === 1 ? "checked" : ""}
                       className="w-50 h-50"
                     />
                   </div>
@@ -359,4 +346,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;

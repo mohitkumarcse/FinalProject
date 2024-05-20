@@ -33,6 +33,12 @@ Route::middleware('auth:sanctum', 'isapiadmin')->group(function(){
     //product
 
     Route::post('store-product', [ProductController::class, 'store']);
+    Route::get('view-product', [ProductController::class, 'view']);
+    Route::post('delete-product/{id}', [ProductController::class, 'delete']);
+    Route::post('edit-product/{id}', [ProductController::class, 'edit']);
+    Route::post('update-product/{id}', [ProductController::class, 'update']);
+
+
 
 });
 
