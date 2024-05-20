@@ -42,6 +42,12 @@ const ViewProduct = () => {
   } else {
     if (productList.length > 0) {
       VIEW_PRODUCT_HTML_TABLE = productList.map((item) => {
+        let statusShow = "";
+        if (item.status === 0) {
+          statusShow = "Hidden";
+        } else if (item.status === 1) {
+          statusShow = "Shown";
+        }
         return (
           <tr key={item.id}>
             <td>{item.id}</td>
@@ -63,15 +69,7 @@ const ViewProduct = () => {
                 Edit
               </Link>
             </td>
-            <td>
-              <button
-                type="button"
-                onClick={(e) => deleteProductById(e, item.id)}
-                className="btn btn-danger btn-sm"
-              >
-                Delete
-              </button>
-            </td>
+            <td>{statusShow}</td>
           </tr>
         );
       });

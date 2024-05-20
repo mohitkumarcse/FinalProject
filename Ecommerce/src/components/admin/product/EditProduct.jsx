@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 
 const EditProduct = () => {
   const [categoryList, setCategoryList] = useState([]);
-  const [error, setError] = useState([]);
+  const [error, setError] = useState({});
   const [productInput, setProductInput] = useState({});
   const [picture, setPicture] = useState([]);
   const [allCheckbox, setAllCheckbox] = useState({
@@ -14,13 +14,22 @@ const EditProduct = () => {
     status: false,
   });
 
+  const { id } = useParams();
+
   useEffect(() => {
     axios.get(`all-category`).then((res) => {
       if (res.data.statusCode === 200) {
         setCategoryList(res.data.category_list);
       }
     });
-  }, []);
+
+    axios.post(`edit-product/${id}`).then((res) => {
+      if (res.data.statusCode === 200) {
+        setProductInput(res.data.product_list_by_id);
+        setAllCheckbox(res.data.product_list_by_id);
+      }
+    });
+  }, [id]);
 
   const handleInput = (e) => {
     setProductInput({ ...productInput, [e.target.name]: e.target.value });
@@ -34,24 +43,31 @@ const EditProduct = () => {
     setAllCheckbox({ ...allCheckbox, [e.target.name]: e.target.checked });
   };
 
-  const { id } = useParams();
-
-  useEffect(() => {
-    axios.post(`edit-product/${id}`).then((res) => {
-      if (res.data.statusCode === 200) {
-        console.log(allCheckbox);
-        setProductInput(res.data.product_list_by_id);
-        setAllCheckbox(res.data.product_list_by_id);
-      }
-    });
-  }, []);
-
   const updateProduct = (e) => {
     e.preventDefault();
 
-    const data = productInput;
+    const formData = new FormData();
 
-    axios.post(`update-product/${id}`, data).then((res) => {
+    if (picture != null) {
+      formData.append("image", picture.image);
+    }
+
+    formData.append("category_id", productInput.category_id);
+    formData.append("product_name", productInput.product_name);
+    formData.append("product_slug", productInput.product_slug);
+    formData.append("description", productInput.description);
+    formData.append("meta_title", productInput.meta_title);
+    formData.append("meta_keywords", productInput.meta_keywords);
+    formData.append("meta_description", productInput.meta_description);
+    formData.append("selling_price", productInput.selling_price);
+    formData.append("original_price", productInput.original_price);
+    formData.append("product_brand", productInput.product_brand);
+    formData.append("product_qty", productInput.product_qty);
+    formData.append("popular", allCheckbox.popular ? 1 : 0);
+    formData.append("featured", allCheckbox.featured ? 1 : 0);
+    formData.append("status", allCheckbox.status ? 1 : 0);
+
+    axios.post(`update-product/${id}`, formData).then((res) => {
       if (res.data.statusCode === 200) {
         Swal.fire("Success", res.data.message, "success");
       } else if (res.data.statusCode === 422) {
@@ -59,8 +75,6 @@ const EditProduct = () => {
       }
     });
   };
-
-  console.log(productInput);
 
   return (
     <div className="container-fluid">
@@ -304,7 +318,7 @@ const EditProduct = () => {
                       name="popular"
                       onChange={handleCheckbox}
                       checked={allCheckbox.popular}
-                      // value={productInput.popular === 1 ? "checked" : ""}
+                      // value={productInput.popular || ""}
                       className="w-50 h-50"
                     />
                   </div>
@@ -316,7 +330,7 @@ const EditProduct = () => {
                       name="featured"
                       onChange={handleCheckbox}
                       checked={allCheckbox.featured}
-                      // value={productInput.featured === 1 ? "checked" : ""}
+                      value={productInput.featured === 1 ? "checked" : ""}
                       className="w-50 h-50"
                     />
                   </div>

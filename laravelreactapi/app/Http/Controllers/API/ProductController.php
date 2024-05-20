@@ -53,9 +53,9 @@ class ProductController extends Controller
             $file->move('uploads/product', $filename);
             $products->image = $filename;
         }
-        $products->popular = $request->popular  == true;
-        $products->featured = $request->featured  == true;
-        $products->status = $request->status  == true;
+        $products->popular = $request->popular;
+        $products->featured = $request->featured;
+        $products->status = $request->status;
         $products->save();
 
         return response()->json([
@@ -142,6 +142,7 @@ class ProductController extends Controller
         }
 
         $products = Product :: find($id);
+
 
         if($products){
             $products->category_id = $request->category_id;
