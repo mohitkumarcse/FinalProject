@@ -1,17 +1,22 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import AdminLayout from "./layouts/admin/AdminLayout";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import Home from "./components/frontend/Home";
 import Login from "./components/frontend/auth/Login";
 import Register from "./components/frontend/auth/Register";
 import axios from "axios";
-import { Navigate } from "react-router-dom";
 import AdminPrivateRoute from "./AdminPrivateRoute";
 import Page403 from "./components/errors/Page403";
 import Page404 from "./components/errors/Page404";
 import "./App.css";
+import PublicRoutes from "./PublicRoutes";
+import FrontendLayout from "./layouts/frontend/FrontendLayout";
 
 // Configuring default Axios settings
 axios.defaults.baseURL = "http://127.0.0.1:8000/api/";
@@ -29,7 +34,10 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route element={<PublicRoutes />}>
+          <Route path="*" element={<FrontendLayout />} />
+        </Route>
+
         <Route path="/page403" element={<Page403 />} />
         <Route path="/page404" element={<Page404 />} />
         <Route

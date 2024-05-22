@@ -5,9 +5,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\FrontendController;
+use App\Http\Controllers\API\CartController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+
+Route::get('get-category', [FrontendController::class, 'getCategory']);
+Route::get('get-product/{slug}', [FrontendController::class, 'product']);
+Route::get('product-details/{category_slug}/{product_slug}', [FrontendController::class, 'productDetails']);
+Route::post('add-to-cart', [CartController::class, 'addToCart']);
+
+
 
 Route::middleware('auth:sanctum', 'isapiadmin')->group(function(){
 
@@ -30,6 +39,9 @@ Route::middleware('auth:sanctum', 'isapiadmin')->group(function(){
     Route::post('delete-category/{id}', [CategoryController::class, 'delete']);
     Route::get('all-category', [CategoryController::class, 'allCategory']);
 
+
+
+
     //product
 
     Route::post('store-product', [ProductController::class, 'store']);
@@ -47,5 +59,6 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('logout', [AuthController::class, 'logout']);
 
 });
+
 
 

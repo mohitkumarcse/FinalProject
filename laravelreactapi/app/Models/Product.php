@@ -29,7 +29,7 @@ class Product extends Model
         'status',
     ];
 
-    // protected $with =['category'];
+    protected $with =['category'];
 
     public function category()
     {

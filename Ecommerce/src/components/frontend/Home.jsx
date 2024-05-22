@@ -4,7 +4,6 @@ import Navbar from "../../layouts/frontend/Navbar";
 const Home = () => {
   return (
     <>
-      <Navbar />
       <h1>I am home component</h1>;
     </>
   );

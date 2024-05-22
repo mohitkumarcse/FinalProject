@@ -72,7 +72,6 @@ const AddProduct = () => {
 
     axios.post(`store-product`, formData).then((res) => {
       if (res.data.statusCode === 200) {
-        console.log(allCheckbox);
         Swal.fire("Success", res.data.message, "success");
       } else if (res.data.statusCode === 422) {
         setProductInput({

@@ -72,8 +72,26 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link active" aria-current="page" to="#">
+              <Link className="nav-link active" aria-current="page" to="/about">
                 About
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link active"
+                aria-current="page"
+                to="/contact"
+              >
+                Contact
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link active"
+                aria-current="page"
+                to="/collection"
+              >
+                Collection
               </Link>
             </li>
             {AuthButton}
