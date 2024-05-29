@@ -6,6 +6,7 @@ import ViewProduct from "../components/frontend/collection/ViewProduct";
 import ProductDetails from "../components/frontend/collection/ProductDetails";
 import Cart from "../components/frontend/Cart";
 import Checkout from "../components/frontend/Checkout";
+import ThankYou from "../components/frontend/ThankYou";
 
 const publicRouteList = [
   {
@@ -39,6 +40,10 @@ const publicRouteList = [
   {
     path: "/checkout",
     element: <Checkout />,
+  },
+  {
+    path: "/thankyou",
+    element: <ThankYou />,
   },
 ];
 

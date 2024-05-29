@@ -2,8 +2,10 @@ import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
+  const navigate = useNavigate();
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,7 +39,7 @@ const Checkout = () => {
     setPersonalInfo({ ...personalInfo, [e.target.name]: e.target.value });
   };
 
-  const hanlePlaceOrder = (e) => {
+  const submitPlaceOrder = (e, payment_mode) => {
     e.preventDefault();
     let data = {
       first_name: personalInfo.first_name,
@@ -48,19 +50,82 @@ const Checkout = () => {
       city: personalInfo.city,
       state: personalInfo.state,
       zipcode: personalInfo.zipcode,
+      payment_mode: payment_mode,
+      payment_id: "",
     };
-    console.log(data);
-    axios.post(`place-order`, data).then((res) => {
-      if (res.data.statusCode === 200) {
-        console.log(res);
-        Swal.fire("Order Placed Successfully", res.data.message, "success");
-      } else if (res.data.statusCode === 422) {
-        setPersonalInfo({
-          ...personalInfo,
-          error_list: res.data.validation_errors,
+
+    switch (payment_mode) {
+      case "code":
+        axios.post(`place-order`, data).then((res) => {
+          if (res.data.statusCode === 200) {
+            console.log(res);
+            Swal.fire("Order Placed Successfully", res.data.message, "success");
+            navigate("/thankyou");
+          } else if (res.data.statusCode === 422) {
+            setPersonalInfo({
+              ...personalInfo,
+              error_list: res.data.validation_errors,
+            });
+          }
         });
-      }
-    });
+        break;
+
+      case "razorpay":
+        axios.post(`verify-order`, data).then((res) => {
+          if (res.data.statusCode === 200) {
+            var options = {
+              key: "rzp_test_RqKF03HsNlyaDs",
+              amount: totalCartPrice * 100,
+
+              name: "Acme Corp",
+              description: "Test Transaction",
+              // image: "https://example.com/your_logo",
+
+              handler: function (response) {
+                console.log(response.razorpay_payment_id);
+                data.payment_id = response.razorpay_payment_id;
+                axios.post(`place-order`, data).then((res) => {
+                  if (res.data.statusCode === 200) {
+                    Swal.fire(
+                      "Order Placed Successfully",
+                      res.data.message,
+                      "success"
+                    );
+                    navigate("/thankyou");
+                  } else if (res.data.statusCode === 422) {
+                    setPersonalInfo({
+                      ...personalInfo,
+                      error_list: res.data.validation_errors,
+                    });
+                  }
+                });
+              },
+              prefill: {
+                name: data.first_name + data.last_name,
+                email: data.email,
+                contact: data.phone,
+              },
+              notes: {
+                address: "Razorpay Corporate Office",
+              },
+              theme: {
+                color: "#3399cc",
+              },
+            };
+            var rzp1 = new window.Razorpay(options);
+            rzp1.open();
+            // Swal.fire("Order Placed Successfully", res.data.message, "success");
+          } else if (res.data.statusCode === 422) {
+            setPersonalInfo({
+              ...personalInfo,
+              error_list: res.data.validation_errors,
+            });
+          }
+        });
+
+      default:
+        break;
+    }
   };
 
   if (loading) {
@@ -82,7 +147,7 @@ const Checkout = () => {
                 <div className="card-header">
                   <h4>Basic Information</h4>
                 </div>
-                <form onSubmit={hanlePlaceOrder}>
+                <form>
                   <div className="car-body m-4">
                     <div className="row">
                       <div className="col-md-6">
@@ -200,9 +265,18 @@ const Checkout = () => {
                       <div className="col-md-12">
                         <button
                           type="submit"
-                          className="btn btn-primary btn-sm float-end fw-bold"
+                          className="btn btn-primary btn-sm float-end fw-bold mx-1"
+                          onClick={(e) => submitPlaceOrder(e, "code")}
                         >
                           Place order
+                        </button>
+
+                        <button
+                          type="submit"
+                          className="btn btn-primary btn-sm float-end fw-bold mx-1"
+                          onClick={(e) => submitPlaceOrder(e, "razorpay")}
+                        >
+                          Play Online
                         </button>
                       </div>
                     </div>

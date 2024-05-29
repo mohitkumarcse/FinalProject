@@ -169,11 +169,7 @@ const Cart = () => {
       CART_HTML = (
         <div className="row">
           <div className="col-md-12">
-            <table className="table table-striped table-bordered">
-              <tbody>
-                <h4 className="text-center">Your Shoping Cart is Empty</h4>
-              </tbody>
-            </table>
+            <h4 className="text-center">Your Shoping Cart is Empty</h4>
           </div>
         </div>
       );

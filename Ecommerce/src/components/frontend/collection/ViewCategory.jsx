@@ -21,10 +21,14 @@ const ViewCategory = () => {
   } else {
     showCategoryList = showCategory.map((category, index) => {
       return (
-        <div className="col-md-6" key={index}>
+        <div className="col-md-6 mt-5" key={index}>
           <div className="card">
             <Link to="">
-              <img src="" className="w-100" alt={category.name} />
+              {/* <img
+                // src={`http://127.0.0.1:8000/uploads/product/`}
+                className="w-100"
+                alt={category.name}
+              /> */}
             </Link>
 
             <div className="card-body">

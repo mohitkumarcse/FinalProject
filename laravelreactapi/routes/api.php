@@ -20,6 +20,9 @@ Route::get('view-cart', [CartController::class, 'viewCart']);
 Route::put('cart-update-quantity/{cart_id}/{scope}', [CartController::class, 'cartUpdateQuantity']);
 Route::post('cart-remove/{card_id_remove}', [CartController::class, 'cartRemove']);
 Route::post('place-order', [CheckoutController::class, 'placeOrder']);
+Route::post('verify-order', [CheckoutController::class, 'VerifyOrder']);
+
+
 
 
 
